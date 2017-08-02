@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import moment from 'moment'
 import FixedDataTable from 'fixed-data-table'
 import 'fixed-data-table/dist/fixed-data-table.min.css'
 
-import FakeObjectDataListStore from './lib/FakeObjectDataListStore'
+import ExampleData from './constant/ExampleData'
+// import FakeObjectDataListStore from './lib/FakeObjectDataListStore'
+import ConvertObjectDataListStore from './lib/ConvertObjectDataListStore'
 import TextCell from './components/TextCell'
 import SortHeaderCell from './components/SortHeaderCell'
 import SortTypes from './constant/SortTypes'
@@ -12,17 +13,17 @@ const { Table, Column } = FixedDataTable;
 
 class DataListWrapper {
   constructor(indexMap, data) {
-    this._indexMap = indexMap;
-    this._data = data;
+    this.indexMap = indexMap;
+    this.data = data;
   }
 
   getSize() {
-    return this._indexMap.length;
+    return this.indexMap.length;
   }
 
   getObjectAt(index) {
-    return this._data.getObjectAt(
-      this._indexMap[index],
+    return this.data.getObjectAt(
+      this.indexMap[index],
     );
   }
 }
@@ -31,27 +32,28 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this._dataList = new FakeObjectDataListStore(2000);
+    // this.dataList = new FakeObjectDataListStore(2000);
+    this.dataList = new ConvertObjectDataListStore(ExampleData);
 
-    this._defaultSortIndexes = [];
-    var size = this._dataList.getSize();
-    for (var index = 0; index < size; index++) {
-      this._defaultSortIndexes.push(index);
+    this.defaultSortIndexes = [];
+    const size = this.dataList.getSize();
+    for (let index = 0; index < size; index += 1) {
+      this.defaultSortIndexes.push(index);
     }
 
     this.state = {
-      sortedDataList: this._dataList,
+      sortedDataList: this.dataList,
       colSortDirs: {},
     };
 
-    this._onSortChange = this._onSortChange.bind(this);
+    this.onSortChange = this.onSortChange.bind(this);
   }
-  _onSortChange(columnKey, sortDir) {
-    var sortIndexes = this._defaultSortIndexes.slice();
+  onSortChange(columnKey, sortDir) {
+    const sortIndexes = this.defaultSortIndexes.slice();
     sortIndexes.sort((indexA, indexB) => {
-      var valueA = this._dataList.getObjectAt(indexA)[columnKey];
-      var valueB = this._dataList.getObjectAt(indexB)[columnKey];
-      var sortVal = 0;
+      const valueA = this.dataList.getObjectAt(indexA)[columnKey];
+      const valueB = this.dataList.getObjectAt(indexB)[columnKey];
+      let sortVal = 0;
       if (valueA > valueB) {
         sortVal = 1;
       }
@@ -59,21 +61,21 @@ class App extends Component {
         sortVal = -1;
       }
       if (sortVal !== 0 && sortDir === SortTypes.ASC) {
-        sortVal = sortVal * -1;
+        sortVal *= -1;
       }
 
       return sortVal;
     });
 
     this.setState({
-      sortedDataList: new DataListWrapper(sortIndexes, this._dataList),
+      sortedDataList: new DataListWrapper(sortIndexes, this.dataList),
       colSortDirs: {
         [columnKey]: sortDir,
       },
     });
   }
   render() {
-    var { sortedDataList, colSortDirs } = this.state;
+    const { sortedDataList, colSortDirs } = this.state;
     return (
       <Table
         rowHeight={50}
@@ -86,57 +88,57 @@ class App extends Component {
           columnKey="id"
           header={
             <SortHeaderCell
-              onSortChange={this._onSortChange}
+              onSortChange={this.onSortChange}
               sortDir={colSortDirs.id}>
               id
             </SortHeaderCell>
           }
           cell={<TextCell data={sortedDataList} />}
-          width={100}
+          width={200}
         />
         <Column
-          columnKey="firstName"
+          columnKey="product_name"
           header={
             <SortHeaderCell
-              onSortChange={this._onSortChange}
-              sortDir={colSortDirs.firstName}>
-              First Name
+              onSortChange={this.onSortChange}
+              sortDir={colSortDirs.product_name}>
+              Product Name
             </SortHeaderCell>
           }
           cell={<TextCell data={sortedDataList} />}
           width={200}
         />
         <Column
-          columnKey="lastName"
+          columnKey="supplier"
           header={
             <SortHeaderCell
-              onSortChange={this._onSortChange}
-              sortDir={colSortDirs.lastName}>
-              Last Name
+              onSortChange={this.onSortChange}
+              sortDir={colSortDirs.supplier}>
+              Supplier
             </SortHeaderCell>
           }
           cell={<TextCell data={sortedDataList} />}
           width={200}
         />
         <Column
-          columnKey="city"
+          columnKey="quantity"
           header={
             <SortHeaderCell
-              onSortChange={this._onSortChange}
-              sortDir={colSortDirs.city}>
-              City
+              onSortChange={this.onSortChange}
+              sortDir={colSortDirs.quantity}>
+              Quantity
             </SortHeaderCell>
           }
           cell={<TextCell data={sortedDataList} />}
           width={200}
         />
         <Column
-          columnKey="companyName"
+          columnKey="unit_cost"
           header={
             <SortHeaderCell
-              onSortChange={this._onSortChange}
-              sortDir={colSortDirs.companyName}>
-              Company Name
+              onSortChange={this.onSortChange}
+              sortDir={colSortDirs.unit_cost}>
+              Unit Cost
             </SortHeaderCell>
           }
           cell={<TextCell data={sortedDataList} />}
