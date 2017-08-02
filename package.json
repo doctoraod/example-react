@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "faker": "^4.1.0",
+    "fixed-data-table": "^0.6.4",
     "moment": "^2.18.1",
     "react": "15.6.1",
     "react-addons-shallow-compare": "^15.6.0",
@@ -17,5 +19,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^15.1.0"
   }
 }
